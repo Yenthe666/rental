@@ -1,0 +1,104 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* website_rentals
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-07-30 13:55+0000\n"
+"PO-Revision-Date: 2021-07-30 13:55+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: website_rentals
+#: model_terms:ir.ui.view,arch_db:website_rentals.product_inherit
+msgid "<i class=\"fa fa-calendar\"/> Check Availability"
+msgstr "<i class=\"fa fa-calendar\"/> Verfügbarkeit prüfen"
+
+#. module: website_rentals
+#: code:addons/website_rentals/models/rental_pricing.py:0
+#, python-format
+msgid "A pricing rule start time cannot be greater than its end time."
+msgstr "Die Startzeit einer Preislogik kann nicht älter sein als die Endzeit."
+
+#. module: website_rentals
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+msgid "Add one"
+msgstr "Eintrag hinzufügen"
+
+#. module: website_rentals
+#: model:ir.model,name:website_rentals.model_res_currency
+msgid "Currency"
+msgstr "Währung"
+
+#. module: website_rentals
+#: model:ir.model.fields,field_description:website_rentals.field_product_product__display_name
+#: model:ir.model.fields,field_description:website_rentals.field_rental_pricing__display_name
+#: model:ir.model.fields,field_description:website_rentals.field_res_currency__display_name
+#: model:ir.model.fields,field_description:website_rentals.field_sale_order__display_name
+#: model:ir.model.fields,field_description:website_rentals.field_website_rentals_scheduling__display_name
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: website_rentals
+#: model:ir.model.fields,field_description:website_rentals.field_rental_pricing__end_time
+msgid "End Time"
+msgstr "Endzeitpunkt"
+
+#. module: website_rentals
+#: model:ir.model.fields,field_description:website_rentals.field_product_product__id
+#: model:ir.model.fields,field_description:website_rentals.field_rental_pricing__id
+#: model:ir.model.fields,field_description:website_rentals.field_res_currency__id
+#: model:ir.model.fields,field_description:website_rentals.field_sale_order__id
+#: model:ir.model.fields,field_description:website_rentals.field_website_rentals_scheduling__id
+msgid "ID"
+msgstr "ID"
+
+#. module: website_rentals
+#: model:ir.model.fields,field_description:website_rentals.field_product_product____last_update
+#: model:ir.model.fields,field_description:website_rentals.field_rental_pricing____last_update
+#: model:ir.model.fields,field_description:website_rentals.field_res_currency____last_update
+#: model:ir.model.fields,field_description:website_rentals.field_sale_order____last_update
+#: model:ir.model.fields,field_description:website_rentals.field_website_rentals_scheduling____last_update
+msgid "Last Modified on"
+msgstr "Zuletzt geändert am"
+
+#. module: website_rentals
+#: model:ir.model,name:website_rentals.model_rental_pricing
+msgid "Pricing rule of rentals"
+msgstr "Preislogik für Vermietungen"
+
+#. module: website_rentals
+#: model:ir.model,name:website_rentals.model_product_product
+msgid "Product"
+msgstr "Produkt"
+
+#. module: website_rentals
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+msgid "Remove one"
+msgstr "Eintrag entfernen"
+
+#. module: website_rentals
+#: model:ir.model,name:website_rentals.model_sale_order
+msgid "Sales Order"
+msgstr "Verkaufsauftrag"
+
+#. module: website_rentals
+#: model:ir.model,name:website_rentals.model_website_rentals_scheduling
+msgid "Scheduling Utilities"
+msgstr "Terminplanung"
+
+#. module: website_rentals
+#: model:ir.model.fields,field_description:website_rentals.field_rental_pricing__start_time
+msgid "Start Time"
+msgstr "Startzeitpunkt"
+
+#. module: website_rentals
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+msgid "to"
+msgstr "bis"
