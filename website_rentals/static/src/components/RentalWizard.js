@@ -1,128 +1,9 @@
 odoo.define("website_rentals.RentalWizard", function (require) {
     const { Component } = owl;
-    const { useState, useRef, useEffect } = owl.hooks;
-    const { xml, css } = owl.tags;
+    const { useState, useRef } = owl.hooks;
+    const { css } = owl.tags;
     const DateRangePicker = require("website_rentals.DateRangePicker");
     const wUtils = require("website.utils");
-
-    const TEMPLATE = xml `
-        <div id="rental_wizard" class="modal">
-            <div class="modal-dialog modal-dialog-scrollable d-flex s_popup_size_full">
-                <div class="modal-content oe_structure">
-                    <div class="modal-body">
-                        <button
-                            type="button"
-                            class="close"
-                            data-dismiss="modal"
-                            t-on-click="cancel"
-                            style="position:absolute; right:12px; top:10px; z-index:9999;">
-                            <span
-                                role="img"
-                                aria-label="Close">×</span>
-                            <span class="sr-only">Close</span>
-                        </button>
-
-                        <section class="o_colored_level o_cc o_cc1">
-                            <form t-on-submit.prevent="submit" t-if="state.product">
-                                <div class="container">
-                                    <div class="row">
-                                        <h2 t-if="state.product.display_name" t-esc="state.product.display_name" class="w-full" style="display:block; padding:0 0 6px 0; margin:0;"/>
-                                        <p t-if="state.product.description_sale" t-esc="state.product.description_sale" class="w-full" style="display:block;"/>
-                                    </div>
-                                    <div class="row" style="margin-top:12px;">
-                                        <p class="w-full"><strong>Dates</strong></p>
-                                        <div class="flex" style="align-items:center;">
-                                            <input
-                                                t-model="state.startDateInput"
-                                                t-on-change="onDateChange"
-                                                class="form-control"
-                                                name="pickup_date"
-                                                type="date"
-                                                autocomplete="off"
-                                                required="1"
-                                                t-att-min="today()"
-                                                t-att-disabled="state.loading"/>
-                                            <span style="padding:0 8px;">to</span>
-                                            <input
-                                                t-model="state.endDateInput"
-                                                t-on-change="onDateChange"
-                                                class="form-control"
-                                                name="return_date"
-                                                type="date"
-                                                autocomplete="off"
-                                                required="1"
-                                                t-att-min="state.startDateInput || today()"
-                                                t-att-disabled="!state.startDateInput || state.loading"/>
-                                        </div>
-                                    </div>
-
-                                    <!-- NOTE: Cannot use t-if here because it causes issues when trying to reference
-                                        subcomponents defined in this block. -->
-                                    <div t-att-class="(state.startDateInput &amp;&amp; state.endDateInput &amp;&amp; !state.loading) ? '' : 'd-none'">
-                                        <div t-if="!state.quantityAvailable" class="row">
-                                            <p class="text-danger">No quantity available.</p>
-                                        </div>
-                                        <t t-if="state.quantityAvailable">
-                                            <div id="product_qty" class="row flex">
-                                                <p class="w-full" style="margin-top:20px;"><strong>Quantity</strong></p>
-                                                <input
-                                                    t-model="state.quantity"
-                                                    t-on-change="onQtyChange"
-                                                    type="number"
-                                                    class="form-control quantity"
-                                                    name="quantity"
-                                                    min="1"
-                                                    t-att-max="state.quantityAvailable"
-                                                    autocomplete="off"
-                                                    required="1"/>
-                                                <p class="w-full" style="margin-top:20px;">
-                                                    (<span t-esc="state.quantityAvailable"/> Units Available)
-                                                </p>
-                                            </div>
-                                            <DateRangePicker t-ref="pickup-return-picker" onSelect="onTimeslotSelect.bind(state.this)">
-                                                <t t-set-slot="start-label">
-                                                    <h3><strong>Start</strong></h3>
-                                                    <p t-esc="startDate().format('DD.MM.YYYY')"/>
-                                                </t>
-                                                <t t-set-slot="end-label">
-                                                    <h3><strong>End</strong></h3>
-                                                    <p t-esc="endDate().format('DD.MM.YYYY')"/>
-                                                </t>
-                                            </DateRangePicker>
-                                        </t>
-                                    </div>
-                                </div>
-
-                                <hr/>
-
-                                <div class="row" t-if="state.price">
-                                    <p class="w-full"><strong>Price</strong></p>
-                                    <p class="w-full" t-esc="state.price"/>
-                                </div>
-                                <div class="row">
-                                    <p t-if="state.submitError" t-esc="state.submitError" class="text-danger"/>
-                                </div>
-                                <div class="row">
-                                    <button
-                                        class="btn btn-primary"
-                                        type="submit"
-                                        t-att-disabled="state.submitting || !state.quantityAvailable">
-                                        Add <i t-att-class="'fa fa-spinner fa-spin ' + (state.submitting ? '' : 'display-none')"/>
-                                    </button>
-                                    <button
-                                        t-on-click="cancel"
-                                        class="btn btn-link"
-                                        type="button">Cancel</button>
-                                </div>
-                            </form>
-                            <div t-else="">
-                                <i class="fa fa-spinner fa-spin" style="font-size: 24px"/>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-            </div>
-        </div>`;
 
     const STYLE = css `
         #rental_wizard {
@@ -163,7 +44,6 @@ odoo.define("website_rentals.RentalWizard", function (require) {
     `;
 
     class RentalWizard extends Component {
-        static template = TEMPLATE;
         static style = STYLE;
         static components = { DateRangePicker };
 
@@ -488,6 +368,10 @@ odoo.define("website_rentals.RentalWizard", function (require) {
             return moment(new Date()).format("YYYY-MM-DD")
         }
     }
+
+    Object.assign(RentalWizard, {
+        template: "website_rentals.RentalWizard",
+    });
 
     return RentalWizard;
 });

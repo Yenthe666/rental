@@ -17,7 +17,10 @@
     ],
     "images": [],
     "demo": [],
-    "qweb": [],
+    "qweb": [
+        "static/src/components/DateRangePicker.xml",
+        "static/src/components/RentalWizard.xml",
+    ],
     "data": [
         "views/assets.xml",
         "views/product_templates.xml",
