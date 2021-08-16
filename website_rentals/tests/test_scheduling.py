@@ -188,3 +188,6 @@ class SchedulingTests(TransactionCase):
         )
         with self.assertRaises(ValidationError):
             order.action_confirm()
+
+    def test_order_cannot_be_entered_during_security_time(self):
+        pass

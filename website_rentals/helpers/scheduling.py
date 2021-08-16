@@ -61,7 +61,7 @@ class SchedulingHelper(models.AbstractModel):
             if self.range_overlaps(
                 (start_date, stop_date),
                 (
-                    reservation.pickup_date - timedelta(hours=-reservation.product_id.product_tmpl_id.preparation_time),
+                    reservation.pickup_date,
                     reservation.return_date
                 ),
             ):
