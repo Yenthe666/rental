@@ -1,6 +1,7 @@
 import datetime
 import dateutil
 from odoo import _, models
+from odoo.addons.website_rentals.helpers.time import parse_datetime
 
 
 class Product(models.Model):
@@ -27,7 +28,7 @@ class Product(models.Model):
         """
 
         now = datetime.datetime.now()
-        date = dateutil.parser.parse(date).replace(tzinfo=None)
+        date = parse_datetime(date)
 
         if not self.rental_pricing_ids:
             return

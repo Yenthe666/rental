@@ -1,8 +1,9 @@
 odoo.define("website_rentals.RentalWizard", function (require) {
     const { Component } = owl;
-    const { useState, useRef, useEffect } = owl.hooks;
+    const { useState, useRef } = owl.hooks;
     const { xml, css } = owl.tags;
     const DateRangePicker = require("website_rentals.DateRangePicker");
+    const useCurrentTime = require("website_rentals.hooks.useCurrentTime");
     const wUtils = require("website.utils");
 
     const TEMPLATE = xml `
@@ -40,7 +41,7 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                                                 type="date"
                                                 autocomplete="off"
                                                 required="1"
-                                                t-att-min="today()"
+                                                t-att-min="time.now.add(state.product.preparation_time || 0, 'hours').format('YYYY-MM-DD')"
                                                 t-att-disabled="state.loading"/>
                                             <span style="padding:0 8px;">to</span>
                                             <input
@@ -51,7 +52,7 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                                                 type="date"
                                                 autocomplete="off"
                                                 required="1"
-                                                t-att-min="state.startDateInput || today()"
+                                                t-att-min="state.startDateInput || time.now.format('YYYY-MM-DD')"
                                                 t-att-disabled="!state.startDateInput || state.loading"/>
                                         </div>
                                     </div>
@@ -183,6 +184,8 @@ odoo.define("website_rentals.RentalWizard", function (require) {
         refs = {
             pickupReturnPicker: useRef("pickup-return-picker")
         };
+
+        time = useCurrentTime();
 
         constructor(parent, props) {
             super(parent, props)
@@ -482,10 +485,6 @@ odoo.define("website_rentals.RentalWizard", function (require) {
 
         endDateFormatted() {
             return this.endDate(true).format("YYYY-MM-DD HH:mm:ss");
-        }
-
-        today() {
-            return moment(new Date()).format("YYYY-MM-DD")
         }
     }
 

@@ -1,6 +1,6 @@
-import dateutil
-from datetime import timedelta
+from datetime import datetime, timedelta
 from odoo import fields, models
+from odoo.addons.website_rentals.helpers.time import parse_datetime
 
 
 class SchedulingHelper(models.AbstractModel):
@@ -30,7 +30,10 @@ class SchedulingHelper(models.AbstractModel):
         if not product.rent_ok:
             return False
 
-        return self.get_available_qty(product, start_date, stop_date) >= (qty or 0)
+        return (
+            self.get_available_qty(product, start_date, stop_date) >= (qty or 0)
+            and parse_datetime(start_date) >= datetime.now() + timedelta(hours=product.preparation_time or 0)
+        )
 
     def get_available_qty(self, product, start_date, stop_date):
         """
@@ -90,14 +93,8 @@ class SchedulingHelper(models.AbstractModel):
 
             range_overlaps((a_start, a_end), (b_start, b_end))
         """
-
-        def str_to_datetime(data):
-            if type(data) != str:
-                return data.replace(tzinfo=None)
-            return dateutil.parser.parse(data).replace(tzinfo=None)
-
         # ensure that we are working with datetime objects and not strings
-        range_a = (str_to_datetime(range_a[0]), str_to_datetime(range_a[1]))
-        range_b = (str_to_datetime(range_b[0]), str_to_datetime(range_b[1]))
+        range_a = (parse_datetime(range_a[0]), parse_datetime(range_a[1]))
+        range_b = (parse_datetime(range_b[0]), parse_datetime(range_b[1]))
 
         return ((range_a[0] <= range_b[1]) and (range_a[1] >= range_b[0]))
