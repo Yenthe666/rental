@@ -2,6 +2,7 @@ odoo.define("website_rentals.DateRangePicker", function (require) {
     const { Component } = owl;
     const { useState } = owl.hooks;
     const { xml, css } = owl.tags;
+    const _t = require('web.core')._t;
 
     const TEMPLATE = xml `
         <div id="timeslots" class="row flex">
@@ -15,8 +16,8 @@ odoo.define("website_rentals.DateRangePicker", function (require) {
                         t-foreach="filterStartTimeslots(state.timeslotsStart)"
                         t-as="timeslot"
                     >
-                        <p t-esc="timeslot.title"/>
-                        <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
+                        <p t-esc="_t(timeslot.title)"/>
+                        <p><small t-if="timeslot.subtitle" t-esc="_t(timeslot.subtitle)"/></p>
                     </div>
                 </div>
             </div>
@@ -30,8 +31,8 @@ odoo.define("website_rentals.DateRangePicker", function (require) {
                         t-foreach="filterEndTimeslots(state.timeslotsEnd)"
                         t-as="timeslot"
                     >
-                        <p t-esc="timeslot.title"/>
-                        <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
+                        <p t-esc="_t(timeslot.title)"/>
+                        <p><small t-if="timeslot.subtitle" t-esc="_t(timeslot.subtitle)"/></p>
                     </div>
                 </div>
             </div>
@@ -105,6 +106,9 @@ odoo.define("website_rentals.DateRangePicker", function (require) {
                 end: undefined,
             }
         })
+
+        // alias to web.core._t translation fn
+        _t(str) { return _t(str); }
 
         selectStartTimeslot(timeslot) {
             this.state.selectedTimeslots.start = timeslot.id;

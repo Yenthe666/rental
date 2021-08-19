@@ -1,9 +1,10 @@
 odoo.define("website_rentals.RentalWizard", function (require) {
     const { Component } = owl;
-    const { useState, useRef, useEffect } = owl.hooks;
+    const { useState, useRef, useContext } = owl.hooks;
     const { xml, css } = owl.tags;
     const DateRangePicker = require("website_rentals.DateRangePicker");
     const wUtils = require("website.utils");
+    const _t = require('web.core')._t;
 
     const TEMPLATE = xml `
         <div id="rental_wizard" class="modal">
@@ -19,18 +20,18 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                             <span
                                 role="img"
                                 aria-label="Close">×</span>
-                            <span class="sr-only">Close</span>
+                            <span class="sr-only" t-esc="_t('Close')"/>
                         </button>
 
                         <section class="o_colored_level o_cc o_cc1">
                             <form t-on-submit.prevent="submit" t-if="state.product">
                                 <div class="container">
                                     <div class="row">
-                                        <h2 t-if="state.product.display_name" t-esc="state.product.display_name" class="w-full" style="display:block; padding:0 0 6px 0; margin:0;"/>
-                                        <p t-if="state.product.description_sale" t-esc="state.product.description_sale" class="w-full" style="display:block;"/>
+                                        <h2 t-if="state.product.display_name" t-esc="_t(state.product.display_name)" class="w-full" style="display:block; padding:0 0 6px 0; margin:0;"/>
+                                        <p t-if="state.product.description_sale" t-esc="_t(state.product.description_sale)" class="w-full" style="display:block;"/>
                                     </div>
                                     <div class="row" style="margin-top:12px;">
-                                        <p class="w-full"><strong>Dates</strong></p>
+                                        <p class="w-full"><strong t-esc="_t('Dates')"/></p>
                                         <div class="flex" style="align-items:center;">
                                             <input
                                                 t-model="state.startDateInput"
@@ -60,11 +61,11 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                                         subcomponents defined in this block. -->
                                     <div t-att-class="(state.startDateInput &amp;&amp; state.endDateInput &amp;&amp; !state.loading) ? '' : 'd-none'">
                                         <div t-if="!state.quantityAvailable" class="row">
-                                            <p class="text-danger">No quantity available.</p>
+                                            <p class="text-danger" t-esc="_t('No quantity available')"/>
                                         </div>
                                         <t t-if="state.quantityAvailable">
                                             <div id="product_qty" class="row flex">
-                                                <p class="w-full" style="margin-top:20px;"><strong>Quantity</strong></p>
+                                                <p class="w-full" style="margin-top:20px;"><strong t-esc="_t('Quantity')"/></p>
                                                 <input
                                                     t-model="state.quantity"
                                                     t-on-change="onQtyChange"
@@ -76,16 +77,16 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                                                     autocomplete="off"
                                                     required="1"/>
                                                 <p class="w-full" style="margin-top:20px;">
-                                                    (<span t-esc="state.quantityAvailable"/> Units Available)
+                                                    (<span t-esc="state.quantityAvailable"/><span t-esc="_t(' Units Available')"/>)
                                                 </p>
                                             </div>
                                             <DateRangePicker t-ref="pickup-return-picker" onSelect="onTimeslotSelect.bind(state.this)">
                                                 <t t-set-slot="start-label">
-                                                    <h3><strong>Start</strong></h3>
+                                                    <h3><strong t-esc="_t('Start')"/></h3>
                                                     <p t-esc="startDate().format('DD.MM.YYYY')"/>
                                                 </t>
                                                 <t t-set-slot="end-label">
-                                                    <h3><strong>End</strong></h3>
+                                                    <h3><strong t-esc="_t('End')"/></h3>
                                                     <p t-esc="endDate().format('DD.MM.YYYY')"/>
                                                 </t>
                                             </DateRangePicker>
@@ -96,23 +97,24 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                                 <hr/>
 
                                 <div class="row" t-if="state.price">
-                                    <p class="w-full"><strong>Price</strong></p>
+                                    <p class="w-full"><strong t-esc="_t('Price')"/></p>
                                     <p class="w-full" t-esc="state.price"/>
                                 </div>
                                 <div class="row">
-                                    <p t-if="state.submitError" t-esc="state.submitError" class="text-danger"/>
+                                    <p t-if="state.submitError" t-esc="_t(state.submitError)" class="text-danger"/>
                                 </div>
                                 <div class="row">
                                     <button
                                         class="btn btn-primary"
                                         type="submit"
                                         t-att-disabled="state.submitting || !state.quantityAvailable">
-                                        Add <i t-att-class="'fa fa-spinner fa-spin ' + (state.submitting ? '' : 'display-none')"/>
+                                        <span t-esc="_t('Add')"/><i t-att-class="'fa fa-spinner fa-spin ' + (state.submitting ? '' : 'display-none')"/>
                                     </button>
                                     <button
                                         t-on-click="cancel"
                                         class="btn btn-link"
-                                        type="button">Cancel</button>
+                                        type="button"
+                                        t-esc="_t('Cancel')"/>
                                 </div>
                             </form>
                             <div t-else="">
@@ -189,6 +191,9 @@ odoo.define("website_rentals.RentalWizard", function (require) {
             this.state.this = this;
             this.fetchProduct(props.productId);
         }
+
+        // alias to web.core._t translation fn
+        _t(str) { return _t(str); }
 
         /**
          * Attempts to submit the data, adding the item to the cart if possible.
