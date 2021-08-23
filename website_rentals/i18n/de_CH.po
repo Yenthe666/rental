@@ -37,6 +37,15 @@ msgid "Currency"
 msgstr "Währung"
 
 #. module: website_rentals
+#. openerp-web
+#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#, python-format
+msgid "Dates"
+msgstr "Datum"
+
+#. module: website_rentals
 #: model:ir.model.fields,field_description:website_rentals.field_product_product__display_name
 #: model:ir.model.fields,field_description:website_rentals.field_rental_pricing__display_name
 #: model:ir.model.fields,field_description:website_rentals.field_res_currency__display_name
@@ -44,6 +53,15 @@ msgstr "Währung"
 #: model:ir.model.fields,field_description:website_rentals.field_website_rentals_scheduling__display_name
 msgid "Display Name"
 msgstr "Anzeigename"
+
+#. module: website_rentals
+#. openerp-web
+#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#, python-format
+msgid "End"
+msgstr "Ende"
 
 #. module: website_rentals
 #: model:ir.model.fields,field_description:website_rentals.field_rental_pricing__end_time
@@ -67,6 +85,24 @@ msgstr "ID"
 #: model:ir.model.fields,field_description:website_rentals.field_website_rentals_scheduling____last_update
 msgid "Last Modified on"
 msgstr "Zuletzt geändert am"
+
+#. module: website_rentals
+#. openerp-web
+#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#, python-format
+msgid "No quantity available"
+msgstr "Keine Menge verfügbar"
+
+#. module: website_rentals
+#. openerp-web
+#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#, python-format
+msgid "Price"
+msgstr "Preis"
 
 #. module: website_rentals
 #: model:ir.model,name:website_rentals.model_rental_pricing
@@ -94,11 +130,33 @@ msgid "Scheduling Utilities"
 msgstr "Terminplanung"
 
 #. module: website_rentals
+#. openerp-web
+#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#, python-format
+msgid "Start"
+msgstr "Start"
+
+#. module: website_rentals
 #: model:ir.model.fields,field_description:website_rentals.field_rental_pricing__start_time
 msgid "Start Time"
 msgstr "Startzeitpunkt"
 
 #. module: website_rentals
+#. openerp-web
+#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
 #: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#, python-format
 msgid "to"
 msgstr "bis"
+
+#. module: website_rentals
+#. openerp-web
+#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
+#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#, python-format
+msgid " Units Available"
+msgstr " Verfügbare Einheiten"

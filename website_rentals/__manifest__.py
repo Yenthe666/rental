@@ -1,10 +1,10 @@
 {
     "name": "Website Rentals",
     "description": "Exposes rentals in the portal.",
-    "author": "Oocademy",
-    "website": "http://www.oocademy.com",
+    "author": "Mainframe Monkey",
+    "website": "http://www.mainframemonkey.com",
     "category": "Website",
-    "version": "14.0.0.1",
+    "version": "14.0.1.2",
     "depends": [
         "sale",
         "sale_management",
