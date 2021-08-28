@@ -1,42 +1,8 @@
 odoo.define("website_rentals.DateRangePicker", function (require) {
     const { Component } = owl;
     const { useState } = owl.hooks;
-    const { xml, css } = owl.tags;
-
-    const TEMPLATE = xml `
-        <div id="timeslots" class="row flex">
-            <div id="timeslot_start">
-                <t t-slot="start-label"/>
-
-                <div class="row flex card-container">
-                    <div
-                        t-att-class="'card ' + (state.selectedTimeslots.start === timeslot.id ? 'selected ' : '')  + (timeslot.disabled ? 'disabled ' : '')"
-                        t-on-click="selectStartTimeslot(timeslot)"
-                        t-foreach="filterStartTimeslots(state.timeslotsStart)"
-                        t-as="timeslot"
-                    >
-                        <p t-esc="timeslot.title"/>
-                        <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
-                    </div>
-                </div>
-            </div>
-            <div id="timeslot_end">
-                <t t-slot="end-label"/>
-
-                <div class="row flex card-container">
-                    <div
-                        t-att-class="'card ' + (state.selectedTimeslots.end === timeslot.id ? 'selected ' : '') + (timeslot.disabled ? 'disabled ' : '')"
-                        t-on-click="selectEndTimeslot(timeslot)"
-                        t-foreach="filterEndTimeslots(state.timeslotsEnd)"
-                        t-as="timeslot"
-                    >
-                        <p t-esc="timeslot.title"/>
-                        <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+    const { css } = owl.tags;
+    const useExternalXml = require("website_rentals.useExternalXml");
 
     const STYLE = css `
         #timeslots #timeslot_start,
@@ -93,7 +59,7 @@ odoo.define("website_rentals.DateRangePicker", function (require) {
     `;
 
     class DateRangePicker extends Component {
-        static template = TEMPLATE;
+        static template = "website_rentals.DateRangePicker";
         static style = STYLE;
 
         state = useState({
@@ -105,6 +71,10 @@ odoo.define("website_rentals.DateRangePicker", function (require) {
                 end: undefined,
             }
         })
+
+        setup() {
+            useExternalXml(["/website_rentals/static/src/components/DateRangePicker.xml"]);
+        }
 
         selectStartTimeslot(timeslot) {
             this.state.selectedTimeslots.start = timeslot.id;
