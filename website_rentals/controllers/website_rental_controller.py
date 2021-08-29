@@ -28,7 +28,7 @@ class WebsiteRentalController(Controller):
             .sudo()\
             .search_read(
                 [("id", "=", product_id)],
-                fields=("id", "name", "display_name", "description_sale"),
+                fields=("id", "name", "display_name", "description_sale", "preparation_time"),
                 limit=1,
             )
 

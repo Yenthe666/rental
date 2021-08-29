@@ -5,6 +5,7 @@
             <script type="text/javascript" src="/website_rentals/static/src/components/DateRangePicker.js"></script>
             <script type="text/javascript" src="/website_rentals/static/src/components/RentalWizard.js"></script>
             <script type="text/javascript" src="/website_rentals/static/src/js/useExternalXml.js"></script>
+            <script type="text/javascript" src="/website_rentals/static/src/js/hooks/useCurrentTime.js"></script>
             <script type="text/javascript" src="/website_rentals/static/src/js/website_sale.js"></script>
         </xpath>
     </template>

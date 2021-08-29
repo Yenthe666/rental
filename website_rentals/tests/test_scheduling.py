@@ -3,9 +3,17 @@ from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase
 
 
+def current_time():
+    # push our current time up 60 seconds to prevent any conflicts with the
+    # time checking, if a function takes a couple of seconds to run then
+    # our current time will fail checks by the security time functions.
+    return datetime.datetime.now() + datetime.timedelta(minutes=1)
+
+
 class SchedulingTests(TransactionCase):
     def setUp(self):
         super().setUp()
+
 
         # sample product data
         self.meeting_room = self.env["product.product"].create(
@@ -16,6 +24,7 @@ class SchedulingTests(TransactionCase):
                 "uom_id": self.env.ref("uom.product_uom_unit").id,
                 "uom_po_id": self.env.ref("uom.product_uom_unit").id,
                 "rent_ok": True,
+                "preparation_time": 0.0  # hours
             }
         )
         self.oil_change = self.env["product.product"].create(
@@ -26,6 +35,18 @@ class SchedulingTests(TransactionCase):
                 "uom_id": self.env.ref("uom.product_uom_unit").id,
                 "uom_po_id": self.env.ref("uom.product_uom_unit").id,
                 "rent_ok": True,
+                "preparation_time": 0.0  # hours
+            }
+        )
+        self.bicycle = self.env["product.product"].create(
+            {
+                "name": "Bicycle",
+                "categ_id": self.env.ref("sale_renting.cat_renting").id,
+                "type": "product",
+                "uom_id": self.env.ref("uom.product_uom_unit").id,
+                "uom_po_id": self.env.ref("uom.product_uom_unit").id,
+                "rent_ok": True,
+                "preparation_time": 48.0,  # hours
             }
         )
 
@@ -37,18 +58,25 @@ class SchedulingTests(TransactionCase):
                 "new_quantity": 1.0,
             }
         ).change_product_qty()
+        self.env["stock.change.product.qty"].create(
+            {
+                "product_id": self.bicycle.id,
+                "product_tmpl_id": self.bicycle.product_tmpl_id.id,
+                "new_quantity": 10.0,
+            }
+        ).change_product_qty()
 
     def test_overlapping_dates(self):
         scheduling = self.env["website.rentals.scheduling"]
 
         assert scheduling.range_overlaps(
             (
-                datetime.datetime.now(),
-                datetime.datetime.now() + datetime.timedelta(hours=5),
+                current_time(),
+                current_time() + datetime.timedelta(hours=5),
             ),
             (
-                datetime.datetime.now() - datetime.timedelta(hours=5),
-                datetime.datetime.now() + datetime.timedelta(hours=1),
+                current_time() - datetime.timedelta(hours=5),
+                current_time() + datetime.timedelta(hours=1),
             ),
         )
 
@@ -57,12 +85,12 @@ class SchedulingTests(TransactionCase):
 
         assert not scheduling.range_overlaps(
             (
-                datetime.datetime.now(),
-                datetime.datetime.now() + datetime.timedelta(hours=5),
+                current_time(),
+                current_time() + datetime.timedelta(hours=5),
             ),
             (
-                datetime.datetime.now() - datetime.timedelta(hours=5),
-                datetime.datetime.now() - datetime.timedelta(hours=1),
+                current_time() - datetime.timedelta(hours=5),
+                current_time() - datetime.timedelta(hours=1),
             ),
         )
 
@@ -71,12 +99,12 @@ class SchedulingTests(TransactionCase):
 
         assert scheduling.range_overlaps(
             (
-                datetime.datetime.now(),
-                datetime.datetime.now() + datetime.timedelta(hours=5),
+                current_time(),
+                current_time() + datetime.timedelta(hours=5),
             ),
             (
-                datetime.datetime.now(),
-                datetime.datetime.now() + datetime.timedelta(hours=5),
+                current_time(),
+                current_time() + datetime.timedelta(hours=5),
             ),
         )
 
@@ -85,14 +113,14 @@ class SchedulingTests(TransactionCase):
 
         assert scheduling.get_available_qty(
             self.meeting_room,
-            datetime.datetime.now(),
-            datetime.datetime.now()
+            current_time(),
+            current_time()
         ) == 1.0
 
         assert scheduling.get_available_qty(
             self.oil_change,
-            datetime.datetime.now(),
-            datetime.datetime.now()
+            current_time(),
+            current_time()
         ) == 0.0
 
     def test_rental_orer_without_conflicts(self):
@@ -108,8 +136,8 @@ class SchedulingTests(TransactionCase):
                             "product_id": self.meeting_room.id,
                             "is_rental": True,
                             "product_uom_qty": 1.0,
-                            "pickup_date": datetime.datetime.now(),
-                            "return_date": datetime.datetime.now(),
+                            "pickup_date": current_time(),
+                            "return_date": current_time(),
                         },
                     ),
                 ]
@@ -134,8 +162,8 @@ class SchedulingTests(TransactionCase):
                             "product_id": self.meeting_room.id,
                             "is_rental": True,
                             "product_uom_qty": 5.0,
-                            "pickup_date": datetime.datetime.now() + datetime.timedelta(days=2),
-                            "return_date": datetime.datetime.now() + datetime.timedelta(days=4),
+                            "pickup_date": current_time() + datetime.timedelta(days=2),
+                            "return_date": current_time() + datetime.timedelta(days=4),
                         },
                     ),
                 ]
@@ -158,8 +186,8 @@ class SchedulingTests(TransactionCase):
                             "product_id": self.meeting_room.id,
                             "is_rental": True,
                             "product_uom_qty": 1.0,
-                            "pickup_date": datetime.datetime.now() + datetime.timedelta(days=10),
-                            "return_date": datetime.datetime.now() + datetime.timedelta(days=20),
+                            "pickup_date": current_time() + datetime.timedelta(days=10),
+                            "return_date": current_time() + datetime.timedelta(days=20),
                         },
                     ),
                 ]
@@ -179,8 +207,8 @@ class SchedulingTests(TransactionCase):
                         {
                             "product_id": self.meeting_room.id,
                             "is_rental": True,
-                            "pickup_date": datetime.datetime.now() + datetime.timedelta(days=5),
-                            "return_date": datetime.datetime.now() + datetime.timedelta(days=15),
+                            "pickup_date": current_time() + datetime.timedelta(days=5),
+                            "return_date": current_time() + datetime.timedelta(days=15),
                         },
                     ),
                 ]
@@ -188,3 +216,15 @@ class SchedulingTests(TransactionCase):
         )
         with self.assertRaises(ValidationError):
             order.action_confirm()
+
+    def test_order_cannot_be_entered_during_security_time(self):
+        scheduling = self.env["website.rentals.scheduling"]
+
+        # (now, 10 days fromnow), should fail, cannot rent before the bicycle 48 hours security time
+        assert scheduling.can_rent(self.bicycle, current_time(), current_time() + datetime.timedelta(days=10), qty=1) == False
+
+        # (47 hours from now, 10 days from now), should fail, cannot rent before the bicycle 48 hours security time
+        assert scheduling.can_rent(self.bicycle, current_time() + datetime.timedelta(hours=47), current_time() + datetime.timedelta(days=10), qty=1) == False
+
+        # (5 days from now, 10 days from now), after 48 hours security time so should be fine
+        assert scheduling.can_rent(self.bicycle, current_time() + datetime.timedelta(days=5), current_time() + datetime.timedelta(days=10), qty=1) == True

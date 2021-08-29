@@ -3,6 +3,7 @@ odoo.define("website_rentals.RentalWizard", function (require) {
     const { useState, useRef } = owl.hooks;
     const { css } = owl.tags;
     const DateRangePicker = require("website_rentals.DateRangePicker");
+    const useCurrentTime = require("website_rentals.hooks.useCurrentTime");
     const useExternalXml = require("website_rentals.useExternalXml");
     const wUtils = require("website.utils");
 
@@ -65,6 +66,8 @@ odoo.define("website_rentals.RentalWizard", function (require) {
         refs = {
             pickupReturnPicker: useRef("pickup-return-picker")
         };
+        
+        time = useCurrentTime();
 
         constructor(parent, props) {
             super(parent, props)
@@ -368,10 +371,6 @@ odoo.define("website_rentals.RentalWizard", function (require) {
 
         endDateFormatted() {
             return this.endDate(true).format("YYYY-MM-DD HH:mm:ss");
-        }
-
-        today() {
-            return moment(new Date()).format("YYYY-MM-DD")
         }
     }
 

@@ -35,7 +35,7 @@
                                                 type="date"
                                                 autocomplete="off"
                                                 required="1"
-                                                t-att-min="today()"
+                                                t-att-min="time.now.add(state.product.preparation_time || 0, 'hours').format('YYYY-MM-DD')"
                                                 t-att-disabled="state.loading"/>
                                             <span style="padding-top: 8px; padding-bottom: 8px">to</span>
                                             <input
@@ -46,7 +46,7 @@
                                                 type="date"
                                                 autocomplete="off"
                                                 required="1"
-                                                t-att-min="state.startDateInput || today()"
+                                                t-att-min="state.startDateInput || time.now.format('YYYY-MM-DD')"
                                                 t-att-disabled="!state.startDateInput || state.loading"/>
                                         </div>
                                     </div>
