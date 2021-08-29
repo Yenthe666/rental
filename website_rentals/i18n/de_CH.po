@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-30 13:55+0000\n"
-"PO-Revision-Date: 2021-07-30 13:55+0000\n"
+"POT-Creation-Date: 2021-08-29 10:28+0000\n"
+"PO-Revision-Date: 2021-08-29 10:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,9 +27,31 @@ msgid "A pricing rule start time cannot be greater than its end time."
 msgstr "Die Startzeit einer Preislogik kann nicht älter sein als die Endzeit."
 
 #. module: website_rentals
+#. openerp-web
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
+#, python-format
+msgid "Add"
+msgstr "Hinzufügen"
+
+#. module: website_rentals
 #: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
 msgid "Add one"
 msgstr "Eintrag hinzufügen"
+
+#. module: website_rentals
+#. openerp-web
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
+#, python-format
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#. module: website_rentals
+#. openerp-web
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
+#, python-format
+msgid "Close"
+msgstr "Schließen"
 
 #. module: website_rentals
 #: model:ir.model,name:website_rentals.model_res_currency
@@ -38,9 +60,7 @@ msgstr "Währung"
 
 #. module: website_rentals
 #. openerp-web
-#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
-#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
-#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
 #, python-format
 msgid "Dates"
 msgstr "Datum"
@@ -56,9 +76,7 @@ msgstr "Anzeigename"
 
 #. module: website_rentals
 #. openerp-web
-#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
-#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
-#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
 #, python-format
 msgid "End"
 msgstr "Ende"
@@ -75,7 +93,7 @@ msgstr "Endzeitpunkt"
 #: model:ir.model.fields,field_description:website_rentals.field_sale_order__id
 #: model:ir.model.fields,field_description:website_rentals.field_website_rentals_scheduling__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: website_rentals
 #: model:ir.model.fields,field_description:website_rentals.field_product_product____last_update
@@ -88,18 +106,14 @@ msgstr "Zuletzt geändert am"
 
 #. module: website_rentals
 #. openerp-web
-#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
-#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
-#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
 #, python-format
-msgid "No quantity available"
-msgstr "Keine Menge verfügbar"
+msgid "No quantity available."
+msgstr "Keine Menge verfügbar."
 
 #. module: website_rentals
 #. openerp-web
-#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
-#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
-#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
 #, python-format
 msgid "Price"
 msgstr "Preis"
@@ -113,6 +127,13 @@ msgstr "Preislogik für Vermietungen"
 #: model:ir.model,name:website_rentals.model_product_product
 msgid "Product"
 msgstr "Produkt"
+
+#. module: website_rentals
+#. openerp-web
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
+#, python-format
+msgid "Quantity"
+msgstr "Menge"
 
 #. module: website_rentals
 #: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
@@ -131,12 +152,10 @@ msgstr "Terminplanung"
 
 #. module: website_rentals
 #. openerp-web
-#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
-#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
-#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
 #, python-format
 msgid "Start"
-msgstr "Start"
+msgstr ""
 
 #. module: website_rentals
 #: model:ir.model.fields,field_description:website_rentals.field_rental_pricing__start_time
@@ -145,18 +164,15 @@ msgstr "Startzeitpunkt"
 
 #. module: website_rentals
 #. openerp-web
-#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
-#: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
-#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
 #, python-format
-msgid "to"
-msgstr "bis"
+msgid "Units Available)"
+msgstr "Verfügbare Einheiten)"
 
 #. module: website_rentals
 #. openerp-web
-#: code:addons/website_sale/static/src/xml/website_sale_dashboard.xml:0
+#: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
 #: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
-#: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
 #, python-format
-msgid " Units Available"
-msgstr " Verfügbare Einheiten"
+msgid "to"
+msgstr "bis"
