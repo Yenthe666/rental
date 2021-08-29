@@ -17,7 +17,9 @@
     ],
     "images": [],
     "demo": [],
-    "qweb": [],
+    "qweb": [
+        "static/src/components/*.xml",
+    ],
     "data": [
         "views/assets.xml",
         "views/product_templates.xml",

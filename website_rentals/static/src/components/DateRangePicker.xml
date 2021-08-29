@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+    <t t-name="website_rentals.DateRangePicker" owl="1">
+        <div id="timeslots" class="row flex">
+            <div id="timeslot_start">
+                <t t-slot="start-label"/>
+
+                <div class="row flex card-container">
+                    <div
+                        t-att-class="'card ' + (state.selectedTimeslots.start === timeslot.id ? 'selected ' : '')  + (timeslot.disabled ? 'disabled ' : '')"
+                        t-on-click="selectStartTimeslot(timeslot)"
+                        t-foreach="filterStartTimeslots(state.timeslotsStart)"
+                        t-as="timeslot"
+                    >
+                        <p t-esc="timeslot.title"/>
+                        <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
+                    </div>
+                </div>
+            </div>
+            <div id="timeslot_end">
+                <t t-slot="end-label"/>
+
+                <div class="row flex card-container">
+                    <div
+                        t-att-class="'card ' + (state.selectedTimeslots.end === timeslot.id ? 'selected ' : '') + (timeslot.disabled ? 'disabled ' : '')"
+                        t-on-click="selectEndTimeslot(timeslot)"
+                        t-foreach="filterEndTimeslots(state.timeslotsEnd)"
+                        t-as="timeslot"
+                    >
+                        <p t-esc="timeslot.title"/>
+                        <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
