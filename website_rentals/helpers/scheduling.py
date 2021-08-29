@@ -1,4 +1,4 @@
-rom datetime import datetime, timedelta
+from datetime import datetime, timedelta
 from odoo import fields, models
 from odoo.addons.website_rentals.helpers.time import parse_datetime
 
