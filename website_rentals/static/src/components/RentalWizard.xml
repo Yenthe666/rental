@@ -37,7 +37,7 @@
                                                 required="1"
                                                 t-att-min="today()"
                                                 t-att-disabled="state.loading"/>
-                                            <span style="padding:0 8px;">to</span>
+                                            <span style="padding-top: 8px; padding-bottom: 8px">to</span>
                                             <input
                                                 t-model="state.endDateInput"
                                                 t-on-change="onDateChange"
@@ -55,7 +55,7 @@
                                         subcomponents defined in this block. -->
                                     <div t-att-class="(state.startDateInput &amp;&amp; state.endDateInput &amp;&amp; !state.loading) ? '' : 'd-none'">
                                         <div t-if="!state.quantityAvailable" class="row">
-                                            <p class="text-danger">No quantity available.</p>
+                                            <p class="text-danger pt-2">No quantity available.</p>
                                         </div>
                                         <t t-if="state.quantityAvailable">
                                             <div id="product_qty" class="row flex">
