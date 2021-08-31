@@ -49,6 +49,7 @@ class Product(models.Model):
         # Break up the day into segements of `interval size`. If the smallest
         # pricing rule is 2 hours, then this will divy up the day into the slots
         # 2:00, 4:00, 6:00.
+
         timeslots = []
         current_timeslot = datetime.datetime(
             year=date.year,
@@ -71,11 +72,15 @@ class Product(models.Model):
                 minute=price_rule.end_time_minutes
             )
 
+        # Account for security time padding.
+        if self.preparation_time:
+            current_timeslot += datetime.timedelta(hours=self.preparation_time)
+
         while True:
+            if current_timeslot > date:
+                break
             if current_timeslot > now:
                 timeslots.append(current_timeslot.strftime("%H:%M"))
             current_timeslot += datetime.timedelta(hours=price_rule.duration)
-            if current_timeslot > date:
-                break
 
         return timeslots

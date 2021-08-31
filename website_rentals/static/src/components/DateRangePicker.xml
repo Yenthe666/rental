@@ -6,14 +6,19 @@
                 <t t-slot="start-label"/>
 
                 <div class="row flex card-container">
-                    <div
-                        t-att-class="'card ' + (state.selectedTimeslots.start === timeslot.id ? 'selected ' : '')  + (timeslot.disabled ? 'disabled ' : '')"
-                        t-on-click="selectStartTimeslot(timeslot)"
-                        t-foreach="filterStartTimeslots(state.timeslotsStart)"
-                        t-as="timeslot"
-                    >
-                        <p t-esc="timeslot.title"/>
-                        <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
+                    <t t-if="filterStartTimeslots(state.timeslotsStart).length">
+                        <div
+                            t-att-class="'card ' + (state.selectedTimeslots.start === timeslot.id ? 'selected ' : '')  + (timeslot.disabled ? 'disabled ' : '')"
+                            t-on-click="selectStartTimeslot(timeslot)"
+                            t-foreach="filterStartTimeslots(state.timeslotsStart)"
+                            t-as="timeslot"
+                        >
+                            <p t-esc="timeslot.title"/>
+                            <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
+                        </div>
+                    </t>
+                    <div t-else="">
+                        <p>No timeslots available on this day.</p>
                     </div>
                 </div>
             </div>
@@ -21,14 +26,19 @@
                 <t t-slot="end-label"/>
 
                 <div class="row flex card-container">
-                    <div
-                        t-att-class="'card ' + (state.selectedTimeslots.end === timeslot.id ? 'selected ' : '') + (timeslot.disabled ? 'disabled ' : '')"
-                        t-on-click="selectEndTimeslot(timeslot)"
-                        t-foreach="filterEndTimeslots(state.timeslotsEnd)"
-                        t-as="timeslot"
-                    >
-                        <p t-esc="timeslot.title"/>
-                        <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
+                    <t t-if="filterEndTimeslots(state.timeslotsEnd).length">
+                        <div
+                            t-att-class="'card ' + (state.selectedTimeslots.end === timeslot.id ? 'selected ' : '') + (timeslot.disabled ? 'disabled ' : '')"
+                            t-on-click="selectEndTimeslot(timeslot)"
+                            t-foreach="filterEndTimeslots(state.timeslotsEnd)"
+                            t-as="timeslot"
+                        >
+                            <p t-esc="timeslot.title"/>
+                            <p><small t-if="timeslot.subtitle" t-esc="timeslot.subtitle"/></p>
+                        </div>
+                    </t>
+                    <div t-else="">
+                        <p>No timeslots available on this day.</p>
                     </div>
                 </div>
             </div>
