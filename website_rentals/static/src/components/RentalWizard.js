@@ -66,7 +66,7 @@ odoo.define("website_rentals.RentalWizard", function (require) {
         refs = {
             pickupReturnPicker: useRef("pickup-return-picker")
         };
-        
+
         time = useCurrentTime();
 
         constructor(parent, props) {

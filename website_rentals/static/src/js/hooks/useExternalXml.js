@@ -1,5 +1,6 @@
 odoo.define("website_rentals.useExternalXml", function(require) {
     const { useEnv, onWillStart } = owl.hooks;
+    const fetchCache = {};
 
     /**
      * At this point, there is no support in Odoo for loading Owl XML templates
@@ -26,9 +27,12 @@ odoo.define("website_rentals.useExternalXml", function(require) {
      */
     return function useExternalXml(urls) {
         const env = useEnv();
+
         onWillStart(async() => {
-            const requests = await Promise.all(urls.map(url => fetch(url)));
-            const contents = await Promise.all(requests.map(req => req.text()));
+            const requests = await Promise.all(urls.map(url => fetchCache[url] || (fetchCache[url] = fetch(url))));
+            const unreadRequests = requests.filter(req => !req.bodyUsed);
+            const contents = await Promise.all(unreadRequests.map(req => req.text()));
+
             contents.forEach(xml => env.qweb.addTemplates(xml));
         });
     };
