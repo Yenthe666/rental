@@ -24,9 +24,9 @@
                                         <h2 t-if="state.product.display_name" t-esc="state.product.display_name" class="w-full" style="display:block; padding:0 0 6px 0; margin:0;"/>
                                         <p t-if="state.product.description_sale" t-esc="state.product.description_sale" class="w-full" style="display:block;"/>
                                     </div>
-                                    <div class="row" style="margin-top:12px;">
-                                        <p class="w-full"><strong>Dates</strong></p>
-                                        <div class="flex" style="align-items:center;">
+                                    <div class="row pt-4">
+                                        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 col-xl-5"
+                                             style="padding: 0 !important; margin: 0 !important;">
                                             <input
                                                 t-model="state.startDateInput"
                                                 t-on-change="onDateChange"
@@ -37,7 +37,14 @@
                                                 required="1"
                                                 t-att-min="time.now.add(state.product.preparation_time || 0, 'hours').format('YYYY-MM-DD')"
                                                 t-att-disabled="state.loading"/>
-                                            <span style="padding-top: 8px; padding-bottom: 8px">to</span>
+
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-1 col-lg-1 col-xl-1"
+                                        style="padding: 0 !important; margin: 0 !important;">
+                                            <p style="padding-top: 8px; padding-bottom: 8px; text-align:center;">to</p>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 col-xl-5"
+                                             style="padding: 0 !important; margin: 0 !important;">
                                             <input
                                                 t-model="state.endDateInput"
                                                 t-on-change="onDateChange"
@@ -64,13 +71,13 @@
                                                     t-model="state.quantity"
                                                     t-on-change="onQtyChange"
                                                     type="number"
-                                                    class="form-control quantity"
+                                                    class="form-control quantity w-50"
                                                     name="quantity"
                                                     min="1"
                                                     t-att-max="state.quantityAvailable"
                                                     autocomplete="off"
                                                     required="1"/>
-                                                <p class="w-full" style="margin-top:20px;">
+                                                <p class="w-50" style="margin-top:12px; padding-left: 10px;">
                                                     (<span t-esc="state.quantityAvailable"/> Units Available)
                                                 </p>
                                             </div>
@@ -86,9 +93,6 @@
                                             </DateRangePicker>
                                         </t>
                                     </div>
-                                </div>
-
-                                <hr/>
 
                                 <div class="row" t-if="state.price">
                                     <p class="w-full"><strong>Price</strong></p>
@@ -97,6 +101,9 @@
                                 <div class="row">
                                     <p t-if="state.submitError" t-esc="state.submitError" class="text-danger"/>
                                 </div>
+                                </div>
+
+                                <hr/>
                                 <div class="row">
                                     <button
                                         class="btn btn-primary"
