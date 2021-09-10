@@ -54,11 +54,11 @@ class WebsiteRentalController(Controller):
         website=True,
         csrf=False
     )
-    def get_rental_hourly_timeslots(self, product_id, date):
+    def get_rental_hourly_timeslots(self, product_id, start_date, stop_date):
         return request.env["product.product"]\
             .sudo()\
             .browse(product_id)\
-            .get_rental_hourly_timeslots(date)
+            .get_rental_hourly_timeslots(start_date, stop_date)
 
     @route(
         ["/website/rentals/get_price"],

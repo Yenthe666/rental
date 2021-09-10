@@ -92,7 +92,7 @@ msgstr "Zuletzt geändert am"
 #: model_terms:ir.ui.view,arch_db:website_rentals.cart_lines
 #: model_terms:ir.ui.view,arch_db:website_sale.cart_summary
 #, python-format
-msgid "No quantity available"
+msgid "No availability"
 msgstr "Keine Menge verfügbar"
 
 #. module: website_rentals

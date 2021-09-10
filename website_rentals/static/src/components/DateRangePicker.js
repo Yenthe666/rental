@@ -9,6 +9,7 @@ odoo.define("website_rentals.DateRangePicker", function (require) {
         #timeslots #timeslot_end {
             flex-grow: 1;
             margin-top: 8px;
+            min-width: 49%;
         }
 
         #timeslots {

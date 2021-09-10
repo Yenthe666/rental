@@ -108,7 +108,7 @@ msgstr "Dernière modification le"
 #. openerp-web
 #: code:addons/website_rentals/static/src/components/RentalWizard.xml:0
 #, python-format
-msgid "No quantity available."
+msgid "No availability."
 msgstr "Pas de quantité disponible"
 
 #. module: website_rentals
