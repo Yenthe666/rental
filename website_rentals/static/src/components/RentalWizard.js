@@ -193,7 +193,7 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                 }).then(res => {
                     resolve({
                         canOrder: res,
-                        error: res ? "Date range is not available right now. Please try another date.": false
+                        error: !res ? "Date range is not available right now. Please try another date." : false
                     });
                 });
             });
@@ -261,77 +261,56 @@ odoo.define("website_rentals.RentalWizard", function (require) {
         fetchTimeslots() {
             return new Promise(resolve => {
                 // Not possible to set timeslots without an initialized date range picker component
-                if(!this.refs.pickupReturnPicker.comp) {
+                const pickupReturnPicker = this.refs.pickupReturnPicker.comp;
+                if(!pickupReturnPicker) {
                     resolve();
                     return;
                 }
-
-                let pickupReturnPickerState = this.refs.pickupReturnPicker.comp.state;
 
                 // Users need to set start and end dates before timeslots can be set
                 if (!(this.state.startDateInput && this.state.endDateInput)) {
-                    pickupReturnPickerState.timeslotsStart = [];
-                    pickupReturnPickerState.timeslotsEnd = [];
+                    pickupReturnPicker.state.timeslotsStart = [];
+                    pickupReturnPicker.state.timeslotsEnd = [];
                     resolve();
                     return;
                 }
 
-                pickupReturnPickerState.selectedTimeslot = undefined;
-                this._fetchStartTimeslots().then(() => {
-                    this._fetchEndTimeslots().then(() => {
-                        if(this.refs.pickupReturnPicker.comp) {
-                            this.refs.pickupReturnPicker.comp.reset();
-                        }
-                        pickupReturnPickerState.sameDay = this.onSameDay();
+                pickupReturnPicker.state.selectedTimeslot = undefined;
+
+                this.env.services.rpc({
+                    route: "/website/rentals/get_rental_hourly_timeslots",
+                    params: {
+                        product_id: this.state.product.id,
+                        start_date: this.state.startDateInput,
+                        stop_date: this.state.endDateInput,
+                    }
+                }).then(res => {
+                    if(!res) {
                         resolve();
+                        return;
+                    }
+
+                    pickupReturnPicker.state.timeslotsStart = res.start.map(timeStr => {
+                        return {
+                            id: `${this.state.startDateInput}${timeStr}`,
+                            title: timeStr,
+                            hour: Number(timeStr.split(":")[0]),
+                            minutes: Number(timeStr.split(":")[1]),
+                        };
                     });
-                });
-            });
-        }
 
-        _fetchStartTimeslots() {
-            return new Promise(resolve => {
-                this.env.services.rpc({
-                    route: "/website/rentals/get_rental_hourly_timeslots",
-                    params: {
-                        product_id: this.state.product.id,
-                        date: this.state.startDateInput,
-                    }
-                }).then(res => {
-                    if(this.refs.pickupReturnPicker.comp) {
-                        this.refs.pickupReturnPicker.comp.state.timeslotsStart = res.map(timeStr => {
-                            return {
-                                id: `${this.state.startDateInput}${timeStr}`,
-                                title: timeStr,
-                                hour: Number(timeStr.split(":")[0]),
-                                minutes: Number(timeStr.split(":")[1]),
-                            };
-                         });
-                    }
-                    resolve();
-                });
-            });
-        }
+                    pickupReturnPicker.state.timeslotsEnd = res.stop.map(timeStr => {
+                        return {
+                            id: `${this.state.endDateInput}${timeStr}`,
+                            title: timeStr,
+                            hour: Number(timeStr.split(":")[0]),
+                            minutes: Number(timeStr.split(":")[1]),
+                        };
+                    });
 
-        _fetchEndTimeslots() {
-            return new Promise(resolve => {
-                this.env.services.rpc({
-                    route: "/website/rentals/get_rental_hourly_timeslots",
-                    params: {
-                        product_id: this.state.product.id,
-                        date: this.state.endDateInput,
-                    }
-                }).then(res => {
-                    if(this.refs.pickupReturnPicker.comp) {
-                        this.refs.pickupReturnPicker.comp.state.timeslotsEnd = res.map(timeStr => {
-                            return {
-                                id: `${this.state.endDateInput}${timeStr}`,
-                                title: timeStr,
-                                hour: Number(timeStr.split(":")[0]),
-                                minutes: Number(timeStr.split(":")[1]),
-                            };
-                        });
-                    }
+                    pickupReturnPicker.reset();
+                    pickupReturnPicker.state.sameDay = this.onSameDay();
+
                     resolve();
                 });
             });

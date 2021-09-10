@@ -62,7 +62,7 @@
                                         subcomponents defined in this block. -->
                                     <div t-att-class="(state.startDateInput &amp;&amp; state.endDateInput &amp;&amp; !state.loading) ? '' : 'd-none'">
                                         <div t-if="!state.quantityAvailable" class="row">
-                                            <p class="text-danger pt-2">No quantity available.</p>
+                                            <p class="text-danger pt-2">No availability.</p>
                                         </div>
                                         <t t-if="state.quantityAvailable">
                                             <div id="product_qty" class="row flex">
