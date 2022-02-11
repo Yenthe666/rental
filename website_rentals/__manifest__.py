@@ -14,6 +14,7 @@
         "web",
         "website",
         "website_sale",
+        "sale_stock_renting",
     ],
     "images": [],
     "demo": [],

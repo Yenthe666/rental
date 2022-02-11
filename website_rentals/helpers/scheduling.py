@@ -80,7 +80,14 @@ class SchedulingHelper(models.AbstractModel):
 
         res = self.env["sale.order.line"]
 
-        reservations = self.get_reservations(product)
+        reservations = self.env["sale.order.line"]
+
+        if product.product_tmpl_id.rental_check_availability_on_all_products:
+            for prod in product.product_tmpl_id.product_variant_ids:
+                reservations += self.get_reservations(prod)
+        else:
+            reservations = self.get_reservations(product)
+
         if not reservations:
             return res
 
