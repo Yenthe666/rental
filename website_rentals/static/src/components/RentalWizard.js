@@ -345,7 +345,7 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                 }
                 timeStr += " " + this.refs.pickupReturnPicker.comp.findSelectedEnd().title;
             }
-            return moment(timeStr);
+            return moment(timeStr).add(1, 'days');
         }
 
         endDateFormatted() {
