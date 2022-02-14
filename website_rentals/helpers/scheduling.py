@@ -105,7 +105,7 @@ class SchedulingHelper(models.AbstractModel):
         return self.env["sale.order.line"].search(
             [
                 ("order_id.is_rental_order", "=", True),
-                ("order_id.rental_status", "in", ("pickup", "return")),
+                ("order_id.rental_status", "in", ("pickup", "return", "sent")),
                 ("product_id", "=", product.id),
             ]
         )
