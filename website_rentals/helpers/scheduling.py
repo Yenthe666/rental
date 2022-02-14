@@ -78,13 +78,22 @@ class SchedulingHelper(models.AbstractModel):
     def get_overlapping_reservations(self, product, start_date, stop_date):
         """Returns order lines that are confirmed for a given product and time period."""
 
-        res = self.env["sale.order.line"]
+        res = self.env["sale.rental.schedule"]
 
-        reservations = self.get_reservations(product)
+        reservations = self.env["sale.order.line"]
+
+        if product.product_tmpl_id.rental_check_availability_on_all_products:
+            for prod in product.product_tmpl_id.product_variant_ids:
+                reservations += self.get_reservations(prod)
+        else:
+            reservations = self.get_reservations(product)
+
         if not reservations:
             return res
 
-        for reservation in reservations:
+        rental_schedules = self.env['sale.rental.schedule'].search([('order_line_id', 'in', reservations.ids)])
+
+        for reservation in rental_schedules:
             if self.range_overlaps(
                 (start_date, stop_date),
                 (
@@ -94,7 +103,7 @@ class SchedulingHelper(models.AbstractModel):
             ):
                 res |= reservation
 
-        return res
+        return res.order_line_id
 
     def get_reservations(self, product):
         """
