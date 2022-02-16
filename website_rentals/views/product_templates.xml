@@ -9,9 +9,9 @@
                 <field name="start_time" widget="float_time"/>
                 <field name="end_time" widget="float_time"/>
             </xpath>
-            <field name="rental_pricing_ids" position="before">
+            <xpath expr="//notebook/page[@name='rental']/group/group[@name='extra']" position="inside">
                 <field name="rental_check_availability_on_all_products" widget="boolean_toggle"/>
-            </field>
+            </xpath>
         </field>
     </record>
 </odoo>
