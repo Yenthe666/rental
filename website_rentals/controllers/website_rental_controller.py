@@ -1,3 +1,5 @@
+import datetime
+
 from odoo.http import Controller, route, request
 
 class WebsiteRentalController(Controller):
@@ -54,11 +56,15 @@ class WebsiteRentalController(Controller):
         website=True,
         csrf=False
     )
-    def get_rental_hourly_timeslots(self, product_id, start_date, stop_date):
-        return request.env["product.product"]\
+    def get_rental_hourly_timeslots(self, product_id, start_date, stop_date, quantity=0, include_start=True, include_stop=True):
+        # Add space between date and time for the start time we get from the js side
+        if len(start_date) == 15:
+            start_date = start_date[:10] + " " + start_date[10:]
+        timeslots = request.env["product.product"]\
             .sudo()\
             .browse(product_id)\
-            .get_rental_hourly_timeslots(start_date, stop_date)
+            .get_rental_hourly_timeslots(start_date, stop_date, quantity, include_start, include_stop)
+        return timeslots
 
     @route(
         ["/website/rentals/get_price"],
