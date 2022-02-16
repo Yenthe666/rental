@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+
+import pytz
 from odoo import fields, models
 from odoo.addons.website_rentals.helpers.misc import float_range
 from odoo.addons.website_rentals.helpers.time import parse_datetime, float_to_time
@@ -71,8 +73,11 @@ class SchedulingHelper(models.AbstractModel):
         """
 
         overlapping_reservations = self.get_overlapping_reservations(product, start_date, stop_date)
-        total_units = product.qty_in_rent + product.qty_available
-        return max(0, total_units)
+        # Get total units for the product (or product template if the setting rental_check_availability_on_all_products is True)
+        if product.product_tmpl_id.rental_check_availability_on_all_products:
+            total_units = product.product_tmpl_id.qty_in_rent + product.product_tmpl_id.qty_available
+        else:
+            total_units = product.qty_in_rent + product.qty_available
 
         return max(0, total_units - sum(overlapping_reservations.mapped("product_uom_qty")))
 
@@ -179,7 +184,8 @@ class SchedulingHelper(models.AbstractModel):
         # Check for overlaps when the duration is over more than one day. If there are too many overlaps, return no available slots
         if not is_same_day:
             if include_start:
-                overlaps = overlapping_reservations.filtered(lambda r: start_date + timedelta(days=1) <= r.pickup_date < stop_date or start_date + timedelta(days=1) <= r.return_date < stop_date)
+                overlaps = overlapping_reservations.filtered(
+                    lambda r: start_date + timedelta(days=1) <= r.pickup_date < stop_date or start_date + timedelta(days=1) <= r.return_date < stop_date)
             else:
                 overlaps = overlapping_reservations.filtered(lambda r: start_date <= r.pickup_date < stop_date or start_date <= r.return_date < stop_date)
 
@@ -196,16 +202,22 @@ class SchedulingHelper(models.AbstractModel):
             if not is_same_day:
                 stop_datetime = stop_date.replace(hour=int(stop_time))
                 if include_start:
-                    overlaps = overlapping_reservations.filtered(lambda r: stop_date <= r.pickup_date < stop_datetime or stop_date <= r.return_date < stop_datetime)
+                    overlaps = overlapping_reservations.filtered(lambda r: stop_date <= r.pickup_date.astimezone(pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(
+                        tzinfo=None) <= stop_datetime or stop_date <= r.return_date.astimezone(pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(
+                        tzinfo=None) < stop_datetime)
                 else:
-                    overlaps = overlapping_reservations.filtered(lambda r: start_date <= r.pickup_date < stop_datetime or start_date <= r.return_date < stop_datetime)
+                    overlaps = overlapping_reservations.filtered(lambda r: start_date <= r.pickup_date.astimezone(pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(
+                        tzinfo=None) <= stop_datetime or start_date <= r.return_date.astimezone(pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(
+                        tzinfo=None) < stop_datetime)
                 if len(overlaps) + quantity > total_units:
                     remove_stop_times.append(stop_time)
             else:
                 if stop_time <= start_date.hour or remove_all_following:
                     remove_stop_times.append(stop_time)
                 else:
-                    overlaps = overlapping_reservations.filtered(lambda r: r.pickup_date.hour <= stop_time < r.return_date.hour)
+                    overlaps = overlapping_reservations.filtered(
+                        lambda r: r.pickup_date.astimezone(pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(tzinfo=None).hour <= stop_time <= r.return_date.astimezone(
+                            pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(tzinfo=None).hour)
                     if len(overlaps) + quantity > total_units:
                         remove_stop_times.append(stop_time)
                         if include_stop and not include_start:
@@ -219,11 +231,18 @@ class SchedulingHelper(models.AbstractModel):
         for start_time in start_times:
             if not is_same_day:
                 start_datetime = start_date.replace(hour=int(start_time))
-                overlaps = overlapping_reservations.filtered(lambda r: stop_date > r.pickup_date >= start_datetime or stop_date > r.return_date >= start_datetime)
+                overlaps = overlapping_reservations.filtered(
+                    lambda r:
+                    stop_date >= r.pickup_date.astimezone(pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(tzinfo=None) >= start_datetime
+                    or stop_date >= r.return_date.astimezone(pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(tzinfo=None) >= start_datetime
+                )
                 if len(overlaps) + quantity > total_units:
                     remove_start_times.append(start_time)
             else:
-                if len(overlapping_reservations.filtered(lambda r: r.pickup_date.hour <= start_time < r.return_date.hour)) + quantity > total_units:
+                if len(overlapping_reservations.filtered(
+                        lambda r:
+                        r.pickup_date.astimezone(pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(tzinfo=None).hour <= start_time <= r.return_date.astimezone(
+                            pytz.timezone(self.env.user.tz or 'Europe/Brussels')).replace(tzinfo=None).hour)) + quantity > total_units:
                     remove_start_times.append(start_time)
 
         for remove in remove_start_times:
