@@ -17,9 +17,9 @@ class Product(models.Model):
             self, start_date, stop_date
         )
 
-    def get_rental_hourly_timeslots(self, start_date, stop_date=None, quantity=0, include_start=True, include_stop=True):
+    def get_rental_hourly_timeslots(self, start_date, stop_date=None, quantity=0, include_start=True, include_stop=True, timezone=None):
         return self.env["website.rentals.scheduling"].get_rental_hourly_timeslots(
-            self, start_date, stop_date, quantity, include_start, include_stop
+            self, start_date, stop_date, quantity, include_start, include_stop, timezone
         )
 
     def shortest_price_rule(self):
