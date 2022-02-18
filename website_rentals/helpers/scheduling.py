@@ -4,7 +4,6 @@ import pytz
 from odoo import fields, models
 from odoo.addons.website_rentals.helpers.misc import float_range
 from odoo.addons.website_rentals.helpers.time import parse_datetime, float_to_time
-from urllib3 import request
 
 
 def _filter_preparation_time(date, cutoff):
