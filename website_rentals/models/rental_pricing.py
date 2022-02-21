@@ -24,7 +24,7 @@ class RentalPricing(models.Model):
         Take the price for extra hours or extra days into account
         """
         price = super(RentalPricing, self)._compute_price(duration, unit)
-        if unit == self.unit and duration > 0 and duration > self.duration:
+        if unit == self.unit and 0 < self.duration < duration:
             if self.product_template_id.extra_hourly and self.unit == 'hour':
                 duration_full = int(duration / self.duration)
                 duration_rest = duration % self.duration
