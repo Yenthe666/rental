@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+
+import pytz
 from odoo import fields, models
 from odoo.addons.website_rentals.helpers.misc import float_range
 from odoo.addons.website_rentals.helpers.time import parse_datetime, float_to_time
@@ -56,8 +58,8 @@ class SchedulingHelper(models.AbstractModel):
             return False
 
         return (
-            self.get_available_qty(product, start_date, stop_date) >= (qty or 0)
-            and parse_datetime(start_date) >= datetime.now() + timedelta(hours=product.preparation_time or 0)
+                self.get_available_qty(product, start_date, stop_date) >= (qty or 0)
+                and parse_datetime(start_date) >= datetime.now() + timedelta(hours=product.preparation_time or 0)
         )
 
     def get_available_qty(self, product, start_date, stop_date):
@@ -71,30 +73,43 @@ class SchedulingHelper(models.AbstractModel):
         """
 
         overlapping_reservations = self.get_overlapping_reservations(product, start_date, stop_date)
-        total_units = product.qty_in_rent + product.qty_available
+        # Get total units for the product (or product template if the setting rental_check_availability_on_all_products is True)
+        if product.product_tmpl_id.rental_check_availability_on_all_products:
+            total_units = product.product_tmpl_id.qty_in_rent + product.product_tmpl_id.qty_available
+        else:
+            total_units = product.qty_in_rent + product.qty_available
 
         return max(0, total_units - sum(overlapping_reservations.mapped("product_uom_qty")))
 
     def get_overlapping_reservations(self, product, start_date, stop_date):
         """Returns order lines that are confirmed for a given product and time period."""
 
-        res = self.env["sale.order.line"]
+        res = self.env["sale.rental.schedule"]
 
-        reservations = self.get_reservations(product)
+        reservations = self.env["sale.order.line"]
+
+        if product.product_tmpl_id.rental_check_availability_on_all_products:
+            for prod in product.product_tmpl_id.product_variant_ids:
+                reservations += self.get_reservations(prod)
+        else:
+            reservations = self.get_reservations(product)
+
         if not reservations:
             return res
 
-        for reservation in reservations:
+        rental_schedules = self.env['sale.rental.schedule'].search([('order_line_id', 'in', reservations.ids)])
+
+        for reservation in rental_schedules:
             if self.range_overlaps(
-                (start_date, stop_date),
-                (
-                    reservation.pickup_date,
-                    reservation.return_date
-                ),
+                    (start_date, stop_date),
+                    (
+                            reservation.pickup_date,
+                            reservation.return_date
+                    ),
             ):
                 res |= reservation
 
-        return res
+        return res.order_line_id
 
     def get_reservations(self, product):
         """
@@ -105,8 +120,10 @@ class SchedulingHelper(models.AbstractModel):
         return self.env["sale.order.line"].search(
             [
                 ("order_id.is_rental_order", "=", True),
-                ("order_id.rental_status", "in", ("pickup", "return")),
                 ("product_id", "=", product.id),
+                '|',
+                ("order_id.rental_status", "in", ("pickup", "return")),
+                ('order_id.state', '=', 'sale')
             ]
         )
 
@@ -121,7 +138,7 @@ class SchedulingHelper(models.AbstractModel):
 
         return ((range_a[0] <= range_b[1]) and (range_a[1] >= range_b[0]))
 
-    def get_rental_hourly_timeslots(self, product, start_date, stop_date=None):
+    def get_rental_hourly_timeslots(self, product, start_date, stop_date=None, quantity=0, include_start=True, include_stop=True, timezone=None):
         """
         Generates a set of timeslots for a certain time period based on this
         products rental pricing rules.
@@ -130,6 +147,13 @@ class SchedulingHelper(models.AbstractModel):
         product has three rules for 1 hour, 2 hour, and 3 hours, then this is
         going to generate hourly time slots for the start slots.
         """
+
+        # Get total units for the product (or product template if the setting rental_check_availability_on_all_products is True)
+        if product.product_tmpl_id.rental_check_availability_on_all_products:
+            total_units = product.product_tmpl_id.qty_in_rent + product.product_tmpl_id.qty_available
+        else:
+            total_units = product.qty_in_rent + product.qty_available
+
         start_date = parse_datetime(start_date)
         stop_date = parse_datetime(stop_date or start_date)
         is_same_day = start_date.date() == stop_date.date()
@@ -148,10 +172,103 @@ class SchedulingHelper(models.AbstractModel):
         if not stop_times:
             return
 
-        return {
-            "start": list(map(_format_timeslot_time, start_times)),
-            "stop": list(map(_format_timeslot_time, stop_times)),
-        }
+        timezone = self.env.user.tz or timezone
+
+        # Find all possible overlapping reservations
+        overlapping_reservations = self.env['sale.rental.schedule'].search([
+            ('report_line_status', 'in', ['reserved', 'pickedup']),
+            ('product_id', 'in', product.product_tmpl_id.product_variant_ids.ids if product.product_tmpl_id.rental_check_availability_on_all_products else [product.id]),
+            '|',
+            '&', ('pickup_date', '>=', start_date), ('pickup_date', '<=', stop_date + timedelta(days=1)),
+            '&', ('return_date', '>=', start_date), ('return_date', '<=', stop_date + timedelta(days=1)),
+        ])
+
+        # Check for overlaps when the duration is over more than one day. If there are too many overlaps, return no available slots
+        if not is_same_day:
+            if include_start:
+                overlaps = overlapping_reservations.filtered(
+                    lambda r: start_date + timedelta(days=1) <= r.pickup_date < stop_date or start_date + timedelta(days=1) <= r.return_date < stop_date)
+            else:
+                overlaps = overlapping_reservations.filtered(lambda r: start_date <= r.pickup_date < stop_date or start_date <= r.return_date < stop_date)
+
+            if len(overlaps) + quantity > total_units:
+                return {
+                    'start': [],
+                    'stop': []
+                }
+
+        # Search for stop times to remove because they are not available because of overlapping bookings
+        remove_stop_times = []
+        remove_all_following = False
+        for stop_time in stop_times:
+            if not is_same_day:
+                stop_datetime = stop_date.replace(hour=int(stop_time))
+                if include_start:
+                    overlaps = overlapping_reservations.filtered(lambda r: stop_date <= r.pickup_date.astimezone(pytz.timezone(timezone)).replace(
+                        tzinfo=None) <= stop_datetime or stop_date <= r.return_date.astimezone(pytz.timezone(timezone)).replace(
+                        tzinfo=None) < stop_datetime)
+                else:
+                    overlaps = overlapping_reservations.filtered(lambda r: start_date <= r.pickup_date.astimezone(pytz.timezone(timezone)).replace(
+                        tzinfo=None) <= stop_datetime or start_date <= r.return_date.astimezone(pytz.timezone(timezone)).replace(
+                        tzinfo=None) < stop_datetime)
+                if len(overlaps) + quantity > total_units:
+                    remove_stop_times.append(stop_time)
+            else:
+                if stop_time <= start_date.hour or remove_all_following:
+                    remove_stop_times.append(stop_time)
+                else:
+                    overlaps = overlapping_reservations.filtered(
+                        lambda r: r.pickup_date.astimezone(pytz.timezone(timezone)).replace(tzinfo=None).hour <= stop_time <= r.return_date.astimezone(
+                            pytz.timezone(timezone)).replace(tzinfo=None).hour)
+                    if len(overlaps) + quantity > total_units:
+                        remove_stop_times.append(stop_time)
+                        if include_stop and not include_start:
+                            remove_all_following = True
+
+        for remove in remove_stop_times:
+            stop_times.remove(remove)
+
+        # Search for start times to remove because they are not available because of overlapping bookings
+        remove_start_times = []
+        for start_time in start_times:
+            if not is_same_day:
+                start_datetime = start_date.replace(hour=int(start_time))
+                overlaps = overlapping_reservations.filtered(
+                    lambda r:
+                    stop_date >= r.pickup_date.astimezone(pytz.timezone(timezone)).replace(tzinfo=None) >= start_datetime
+                    or stop_date >= r.return_date.astimezone(pytz.timezone(timezone)).replace(tzinfo=None) >= start_datetime
+                )
+                if len(overlaps) + quantity > total_units:
+                    remove_start_times.append(start_time)
+            else:
+                if len(overlapping_reservations.filtered(
+                        lambda r:
+                        r.pickup_date.astimezone(pytz.timezone(timezone)).replace(tzinfo=None).hour <= start_time <= r.return_date.astimezone(
+                            pytz.timezone(timezone)).replace(tzinfo=None).hour)) + quantity > total_units:
+                    remove_start_times.append(start_time)
+
+        for remove in remove_start_times:
+            start_times.remove(remove)
+
+        # If start times or stop times are empty, we clear both because we cannot book a timeslot without a start or stop time
+        if include_start and include_stop:
+            if not start_times or not stop_times:
+                start_times = []
+                stop_times = []
+
+        return_values = {}
+
+        if include_start:
+            return_values.update({
+                "start": list(map(_format_timeslot_time, start_times)),
+            })
+
+        if include_stop:
+            return_values.update({
+                "stop": list(map(_format_timeslot_time, stop_times)),
+            })
+
+        return return_values
 
     def _start_timeslots(self, product, date, same_day=False):
         """Rentable start timeslots for a product."""

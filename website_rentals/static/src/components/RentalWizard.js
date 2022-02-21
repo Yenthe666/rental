@@ -159,6 +159,7 @@ odoo.define("website_rentals.RentalWizard", function (require) {
         }
 
         onTimeslotSelect() {
+            this.fetchTimeslotsEnd();
             this.fetchPrice();
         }
 
@@ -283,6 +284,7 @@ odoo.define("website_rentals.RentalWizard", function (require) {
                         product_id: this.state.product.id,
                         start_date: this.state.startDateInput,
                         stop_date: this.state.endDateInput,
+                        quantity: this.state.quantity,
                     }
                 }).then(res => {
                     if(!res) {
@@ -313,6 +315,50 @@ odoo.define("website_rentals.RentalWizard", function (require) {
 
                     resolve();
                 });
+            });
+        }
+
+        fetchTimeslotsEnd() {
+            return new Promise(resolve => {
+                // Not possible to set timeslots without an initialized date range picker component
+                const pickupReturnPicker = this.refs.pickupReturnPicker.comp;
+                if(!pickupReturnPicker) {
+                    resolve();
+                    return;
+                }
+
+                if (pickupReturnPicker.state.selectedTimeslots.start) {
+                    this.env.services.rpc({
+                        route: "/website/rentals/get_rental_hourly_timeslots",
+                        params: {
+                            product_id: this.state.product.id,
+                            start_date: pickupReturnPicker.state.selectedTimeslots.start,
+                            stop_date: this.state.endDateInput,
+                            quantity: this.state.quantity,
+                            include_start: false,
+                            include_stop: true,
+                        }
+                    }).then(res => {
+                        if(!res) {
+                            resolve();
+                            return;
+                        }
+
+                        pickupReturnPicker.state.timeslotsEnd = res.stop.map(timeStr => {
+                            return {
+                                id: `${this.state.endDateInput}${timeStr}`,
+                                title: timeStr,
+                                hour: Number(timeStr.split(":")[0]),
+                                minutes: Number(timeStr.split(":")[1]),
+                            };
+                        });
+
+    //                    pickupReturnPicker.reset();
+                        pickupReturnPicker.state.sameDay = this.onSameDay();
+
+                        resolve();
+                    });
+                }
             });
         }
 

@@ -56,14 +56,14 @@
     </template>
 
     <!-- Hide variant price bages for rental type products because they aren't relavant. -->
-    <template id="variants" inherit_id="sale.variants">
-        <xpath expr="//select//span[@t-if='ptav.price_extra']" position="attributes">
-            <attribute name="t-if">not product.rent_ok and ptav.price_extra</attribute>
-        </xpath>
-        <xpath expr="//ul//span[@t-if='ptav.price_extra']" position="attributes">
-            <attribute name="t-if">not product.rent_ok and ptav.price_extra</attribute>
-        </xpath>
-    </template>
+<!--    <template id="variants" inherit_id="sale.variants">-->
+<!--        <xpath expr="//select//span[@t-if='ptav.price_extra']" position="attributes">-->
+<!--            <attribute name="t-if">not product.rent_ok and ptav.price_extra</attribute>-->
+<!--        </xpath>-->
+<!--        <xpath expr="//ul//span[@t-if='ptav.price_extra']" position="attributes">-->
+<!--            <attribute name="t-if">not product.rent_ok and ptav.price_extra</attribute>-->
+<!--        </xpath>-->
+<!--    </template>-->
 
     <!-- Hide the price for rental type products, they need to fill out the rental dialog first to check price. -->
     <template id="product_price" inherit_id="website_sale.product_price">
