@@ -4,7 +4,7 @@
     "author": "Mainframe Monkey",
     "website": "http://www.mainframemonkey.com",
     "category": "Website",
-    "version": "14.0.1.3",
+    "version": "14.0.2.0",
     "depends": [
         "sale",
         "sale_management",
