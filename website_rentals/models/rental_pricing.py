@@ -19,6 +19,22 @@ class RentalPricing(models.Model):
             if rule.end_time < rule.start_time:
                 raise ValidationError(_("A pricing rule start time cannot be greater than its end time."))
 
+    def _compute_price(self, duration, unit):
+        """
+        Take the price for extra hours or extra days into account
+        """
+        price = super(RentalPricing, self)._compute_price(duration, unit)
+        if unit == self.unit and duration > 0 and duration > self.duration:
+            if self.product_template_id.extra_hourly and self.unit == 'hour':
+                duration_full = int(duration / self.duration)
+                duration_rest = duration % self.duration
+                price = self.price * duration_full + self.product_template_id.extra_hourly * duration_rest
+            elif self.product_template_id.extra_daily and self.unit == 'day':
+                duration_full = int(duration / self.duration)
+                duration_rest = duration % self.duration
+                price = self.price * duration_full + self.product_template_id.extra_daily * duration_rest
+        return price
+
     @property
     def start_time_hour(self):
         self.ensure_one()
