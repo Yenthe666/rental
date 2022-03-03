@@ -26,13 +26,11 @@ class RentalPricing(models.Model):
         price = super(RentalPricing, self)._compute_price(duration, unit)
         if unit == self.unit and 0 < self.duration < duration:
             if self.product_template_id.extra_hourly and self.unit == 'hour':
-                duration_full = int(duration / self.duration)
-                duration_rest = duration % self.duration
-                price = self.price * duration_full + self.product_template_id.extra_hourly * duration_rest
+                duration_rest = duration - self.duration
+                price = self.price + self.product_template_id.extra_hourly * duration_rest
             elif self.product_template_id.extra_daily and self.unit == 'day':
-                duration_full = int(duration / self.duration)
-                duration_rest = duration % self.duration
-                price = self.price * duration_full + self.product_template_id.extra_daily * duration_rest
+                duration_rest = duration - self.duration
+                price = self.price + self.product_template_id.extra_daily * duration_rest
         return price
 
     @property
