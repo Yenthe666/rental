@@ -25,7 +25,7 @@
     <template id="cart_lines" inherit_id="website_sale.cart_lines">
         <td class="td-product_name" position="inside">
             <div t-if="line.pickup_date and line.return_date" class="text-muted d-none d-md-block small">
-                <span t-field="line.pickup_date"/> to <span t-field="line.return_date"/>
+                <span t-esc="line.pickup_date_no_timezone"/> to <span t-esc="line.return_date_no_timezone"/>
             </div>
         </td>
         <div class="css_quantity input-group mx-auto" position="replace">
