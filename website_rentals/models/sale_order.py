@@ -41,17 +41,3 @@ class SaleOrder(models.Model):
             })
 
         return res
-
-
-class SaleOrderLine(models.Model):
-    _inherit = "sale.order.line"
-
-    pickup_date_no_timezone = fields.Datetime(string="Pickup", compute='_compute_pickup_date_no_timezone')
-    return_date_no_timezone = fields.Datetime(string="Return", compute='_compute_pickup_date_no_timezone')
-
-    def _compute_pickup_date_no_timezone(self):
-        for record in self:
-            if record.pickup_date:
-                record.pickup_date_no_timezone = record.pickup_date.replace(tzinfo=None)
-            if record.return_date:
-                record.return_date_no_timezone = record.return_date.replace(tzinfo=None)
