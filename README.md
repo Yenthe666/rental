@@ -31,6 +31,30 @@ This means that if the customer books for 6 hours we'd do 250€ (4 hours) plus 
 The lowest rule, which is defined in hours, is used as a basis and is only tried to fit in once. Anything over the first time (4 hours here) will add the extra hour price. <br/>
 This means that if a customer would book for 8 hours we do <b>not</b> do 2x 250€ (because of the 4 hours block) but 1x 250€ + (4 hours times the extra hour price of 80€) ending up at 570€ in this sample.
 
+
+### Time slot generation
+The timeslots in the webshop are automatically computed and shown.<br/>
+This is done based on the rental pricing rule (on the rental tab of the product) that is in the unit "Hours" and follows the duration set on the rule.<br/>
+For example: if you have a rental pricing rule with a duration of 4 hours and the start time is 08:00 and the endtime is 18:00 there can only be two starting slots: 08:00 and 12:00.<br/>
+The end slots are then computed in hour intervals. E.g for 4 hour intervals it mean they can start booking at either 08:00 or 12:00 but they can book until 12:00, 13:00, 14:00, 15:00, 16:00, 17:00 and 18:00.<br/>
+The lower the unit is the more timeslots you'll get and the more combinations to rent out. For example on a rule of 2 hours you'd get the following possible start slots:
+- 08:00
+- 10:00
+- 12:00
+- 14:00
+- 16:00
+
+With the following possible end times:
+- 10:00
+- 11:00
+- 12:00
+- 13:00
+- 14:00
+- 15:00
+- 16:00
+- 17:00
+- 18:00
+
 ### Date formats
 When adding a rental product into your basket we store the booked dates in separate fields, in UTC, in the database.<br/>
 The dates are stored as strings for showing in the basket and are formatted in the datetime format from your administrator user. <br/>
