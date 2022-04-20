@@ -5,6 +5,7 @@
     "website": "http://www.mainframemonkey.com",
     "category": "Website",
     "version": "14.0.2.0",
+    "license": "LGPL-3",
     "depends": [
         "sale",
         "sale_management",
